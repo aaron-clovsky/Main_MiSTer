@@ -565,8 +565,8 @@ static void groovy_FPGA_init(uint8_t cmd, uint8_t audio_rate, uint8_t audio_chan
     bits.byte = audio_rate;
     bits.u.bit2 = (audio_chan == 1) ? 1 : 0;
     bits.u.bit3 = (audio_chan == 2) ? 1 : 0;
-    bits.u.bit4 = (rgb_mode == 1) ? 1 : 0;
-    bits.u.bit5 = (rgb_mode == 2) ? 1 : 0;
+    bits.u.bit4 = (rgb_mode == 1 || rgb_mode == 3) ? 1 : 0;
+    bits.u.bit5 = (rgb_mode == 2 || rgb_mode == 3) ? 1 : 0;
     spi_w((uint16_t) bits.byte);
     DisableIO();
 }
@@ -666,7 +666,7 @@ static void loadLogo(int logoStart)
 
 static void groovy_FPGA_blit(uint32_t bytes, uint16_t numBlit)
 {
-    poc->PoC_pixels_ddr = (rgbMode == 1) ? bytes >> 2 : (rgbMode == 2) ? bytes >> 1 : bytes / 3;
+    poc->PoC_pixels_ddr = (rgbMode == 1) ? bytes >> 2 : (rgbMode >= 2) ? bytes >> 1 : bytes / 3;
 
     buffer[3] = (poc->PoC_pixels_ddr) & 0xff;
     buffer[4] = (poc->PoC_pixels_ddr >> 8) & 0xff;
@@ -785,7 +785,7 @@ static void setSwitchres(char *recvbuf)
     	poc->PoC_pixels_len = poc->PoC_pixels_len >> 1;
     }
 
-    poc->PoC_bytes_len = (rgbMode == 1) ? poc->PoC_pixels_len << 2 : (rgbMode == 2) ? poc->PoC_pixels_len << 1 : poc->PoC_pixels_len * 3;
+    poc->PoC_bytes_len = (rgbMode == 1) ? poc->PoC_pixels_len << 2 : (rgbMode >= 2) ? poc->PoC_pixels_len << 1 : poc->PoC_pixels_len * 3;
     poc->PoC_bytes_recv = 0;
     poc->PoC_buffer_offset = 0;
     
@@ -1141,7 +1141,7 @@ static void setInit(uint8_t compression, uint8_t audio_rate, uint8_t audio_chan,
 	blitCompression = (compression <= 1) ? compression : 0;
 	audioRate = (audio_rate <= 3) ? audio_rate : 0;
 	audioChannels = (audio_chan <= 2) ? audio_chan : 0;
-	rgbMode = (rgb_mode <= 2) ? rgb_mode : 0;
+	rgbMode = (rgb_mode <= 3) ? rgb_mode : 0;
 	poc = (PoC_type *) calloc(1, sizeof(PoC_type));
 	initDDR();
 	isBlitting = 0;
