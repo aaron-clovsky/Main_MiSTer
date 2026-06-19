@@ -1,3 +1,10 @@
+# Groovy Main_MiSTer fork
+
+- This fork adds 4:2:2 Chroma Subsampling support to the Groovy fork of MiSTer Main
+- Requires patched Groovy core and API which can be found [here](https://github.com/aaron-clovsky/Groovy_MiSTer)
+
+# Original Readme
+
 # Main_MiSTer Main Binary and Wiki Repo
 
 This repo serves as the home for the MiSTer Main binaries and the Wiki.
